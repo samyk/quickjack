@@ -8,8 +8,8 @@ by [@SamyKamkar](https://twitter.com/samykamkar) // <code@samy.pl> // <http://sa
 
 Code available on [github](https://github.com/samyk/quickjack)
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=LpEvTSaSHwk
-" target="_blank"><img src="http://img.youtube.com/vi/LpEvTSaSHwk/0.jpg" alt="Quickjack" width="640" height="480" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=bCkSVGhIEb4
+" target="_blank"><img src="http://img.youtube.com/vi/bCkSVGhIEb4/0.jpg" alt="Quickjack" width="640" height="480" border="10" /></a>
 
 
 ------
@@ -52,7 +52,7 @@ You can simply use Quickjack [online here](http://samy.pl/quickjack/quickjack.ht
 -----
 
 # Stealing Facebook Likes
-You can see how we **create** the clickjacking attack for Facebook **in seconds** in [the video](https://www.youtube.com/watch?v=LpEvTSaSHwk).
+You can see how we **create** the clickjacking attack for Facebook **in seconds** in [the video](https://www.youtube.com/watch?v=bCkSVGhIEb4).
 
 See the HTML demo (which likely won't last) here: [http://samy.pl/quickjack/pwned.html](http://samy.pl/quickjack/pwned.html)
 which clickjacks this page:
