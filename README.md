@@ -8,8 +8,8 @@ by [@SamyKamkar](https://twitter.com/samykamkar) // <code@samy.pl> // <http://sa
 
 Code available on [github](https://github.com/samyk/quickjack)
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=aSLEq7-hlmo
-" target="_blank"><img src="http://img.youtube.com/vi/aSLEq7-hlmo/0.jpg" alt="Quickjack" width="640" height="480" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=LpEvTSaSHwk
+" target="_blank"><img src="http://img.youtube.com/vi/LpEvTSaSHwk/0.jpg" alt="Quickjack" width="640" height="480" border="10" /></a>
 
 
 ------
@@ -34,6 +34,8 @@ Clickjacking was initially discovered by the amazing [Robert Hansen](https://twi
 
 ![http://samy.pl/quickjack/qj1.png](http://samy.pl/quickjack/qj1.png)
 
+---
+
 ![http://samy.pl/quickjack/qj2.png](http://samy.pl/quickjack/qj2.png)
 
 
@@ -50,7 +52,7 @@ You can simply use Quickjack [online here](http://samy.pl/quickjack/quickjack.ht
 -----
 
 # Stealing Facebook Likes
-You can see how we **create** the clickjacking attack for Facebook **in seconds** in [the video](http://blah.com).
+You can see how we **create** the clickjacking attack for Facebook **in seconds** in [the video](https://www.youtube.com/watch?v=LpEvTSaSHwk).
 
 See the HTML demo (which likely won't last) here: [http://samy.pl/quickjack/pwned.html](http://samy.pl/quickjack/pwned.html)
 which clickjacks this page:
@@ -74,6 +76,10 @@ By tracking the mouse, Quickjack consistently keeps the hidden clickjacking ifra
 Traditionally, the person performing the clickjacking attack cannot detect when the clickjack occurred due to cross-domain policy, however we get around this by ensuring focus is in the parent window, the window we control. Although we can't detect a click or focus in the clickjacking frame, we **can** detect the loss of focus, or blur, within our parent window, the window we control!
 
 This means as soon as the user clicks inside the iframe (without knowing), our window will blur, causing us to trigger a special call. Our call hides the clickjacking iframe further, ensuring the **next** click the user performs actually happens on the page they're on! Awesome!
+
+### Referral Scrubbing
+
+Referral scrubbing is the method of removing your HTTP referrer so the target domain cannot discover where a clickjacking attack originated from. It is optionally allowed by using multiple redirects, or optionally by switching in and out of HTTPS.
 
 ### Preventing Frame Breakout/Frame Busting
 
