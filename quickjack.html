@@ -1,0 +1,341 @@
+<html>
+<head>
+<title>Quickjack - samy kamkar</title>
+<script type="text/javascript">
+var Drag = {};
+var gui;
+var cut;
+var outer;
+var IE;
+var url;
+var site;
+var fade;
+var m={x:0,y:0};
+var pan=false;
+var clickjack = 1;
+var mouseDown=false;
+var gbrk = 0;
+function go(brk)
+{
+	if (brk)
+	{
+		gbrk = 1;
+		function t(e)
+		{
+			window.setTimeout("stop();", 10);
+		}
+		window.onbeforeunload=t;
+		var frames = new Array();
+	}
+	else
+		gbrk = 0;
+	if (url.value.substr(0, 4) != "http")
+		url.value = "http://" + url.value;
+	cut.src = url.value;
+	site.src = url.value;
+}
+function curse()
+{
+	document.body.style.cursor = pan ? 'move' : 'crosshair';
+}
+function init() {
+	panning(0);
+	IE = document.all?true:false;
+	if (!IE) document.captureEvents(Event.MOUSEMOVE);
+	document.onmousemove = getMouseXY;
+	gui = document.getElementById('gui');
+	cut = document.getElementById('cut');
+	x = document.getElementById('x').style;
+	outer = document.getElementById('outer');
+	url = document.getElementById('url');
+	site = document.getElementById('site');
+	fade = document.getElementById('fade');
+	url.focus();
+	gui.onmouseup = gui.onmouseup = function () {
+		//if (!clickjack)
+		//{
+			mouseDown = false;
+			url.value = url.value.split(' ').join('');
+			gui.onmousemove = null;
+			curse();
+		//}
+	}
+	gui.onmousedown = function () {
+		url.focus();
+		mouseDown = true;
+		var tmpX = m.x;
+		var tmpY = m.y;
+		var tmpSiteY = parseInt(site.style.top);
+		var tmpSiteX = parseInt(site.style.left);
+		if(!pan) {
+			if (clickjack)
+			{
+				x.visibility = 'visible';
+				x.left = tmpX - 9;
+				x.top = tmpY - 9;
+				x.zIndex = 10;
+			} else {
+				outer.style.top = tmpY+"px";
+				outer.style.left = tmpX+"px";
+				cut.style.top = -tmpY+parseInt(site.style.top)+"px";
+				cut.style.left = -tmpX+parseInt(site.style.left)+"px";
+				cut.style.width = site.offsetWidth+"px";
+				cut.style.height = site.offsetHeight+"px";
+			}
+		}
+		gui.onmousemove = function () {
+			if(pan && mouseDown) { 
+				site.style.top = tmpSiteY+(m.y-tmpY)+"px";
+				site.style.left = tmpSiteX+(m.x-tmpX)+"px"; 
+				cut.style.top = tmpSiteY+m.y-tmpY-parseInt(outer.style.top)+"px";
+				cut.style.left = tmpSiteX+m.x-tmpX-parseInt(outer.style.left)+"px";
+			} else if (!clickjack) {
+				if(m.y-tmpY<0) { 
+					outer.style.top = m.y+"px";
+					outer.style.height = (tmpY-m.y)+"px";
+					outer.style.minHeight = (tmpY-m.y)+"px";
+					cut.style.top = -m.y+parseInt(site.style.top)+"px";
+				} else {
+					outer.style.height = (m.y-tmpY)+"px";
+					outer.style.minHeight = (m.y-tmpY)+"px";
+				}
+			
+				if(m.x-tmpX<0) {
+					outer.style.left = m.x+"px";
+					outer.style.width = (tmpX-m.x)+"px";
+					cut.style.left = -m.x+parseInt(site.style.left)+"px";
+				} else {
+					outer.style.width = (m.x-tmpX)+"px";
+				}
+			
+			return false;
+			}
+			var wSize = window.size();
+			cut.style.minHeight = site.style.minHeight = site.style.height = cut.style.height = wSize.height+Math.abs(parseInt(site.style.top))+"px";
+			site.style.width = cut.style.width = wSize.width+Math.abs(parseInt(site.style.left))+"px";
+			return false;	
+		}
+		curse();
+		return false;
+	}
+	return false;
+}
+
+getMouseXY = function (e) {
+	if (IE) {
+		m.x = event.clientX + document.body.scrollLeft;
+		m.y = event.clientY + document.body.scrollTop;
+	} else {
+	m.x = e.pageX;
+	m.y = e.pageY;
+	}
+	if (m.x<0) m.x=0;
+	if (m.y<0) m.y=0;
+	return true;
+}
+
+window.size = function() {
+	var w = 0;
+	var h = 0;
+	if(!window.innerWidth) {
+		if(!(document.documentElement.clientWidth == 0)) {
+			w = document.documentElement.clientWidth;
+			h = document.documentElement.clientHeight;
+		} else {
+			w = document.body.clientWidth;
+			h = document.body.clientHeight;
+		}
+	} else {
+		w = window.innerWidth;
+		h = window.innerHeight;
+	}
+return {width:w,height:h};
+}
+
+Drag.start = function () {
+	var elem = document.getElementById('urlbox');
+	var dX = m.x-parseInt(elem.style.left);
+	var dY = m.y-parseInt(elem.style.top);
+	document.body.onmouseup = function () {
+		Drag.stop(this);
+	}
+	document.body.onmousemove = function () {
+		elem.style.left = m.x-dX+"px";
+		elem.style.top = m.y-dY+"px";
+	}
+}
+Drag.stop = function (elem) {
+	elem.onmousemove = null;
+}
+
+changeurl = function (e) {
+	var keyCode;
+	if(window.event) {
+		keyCode = e.keyCode;
+	} else if(e.which) {
+		keyCode = e.which;
+	}
+	if(32==keyCode) {
+		url.value = url.value.split(' ').join('');
+	} else if(13==keyCode) {
+		go();
+		return false;
+	}
+	return true;
+}
+
+dopan = function (e) {
+	var keyCode;
+	if(window.event) {
+		keyCode = e.keyCode;
+	} else if(e.which) {
+		keyCode = e.which;
+	}
+	if(32==keyCode) {
+		panning(1);
+//		pan=true;
+//		document.body.style.cursor='move';
+	}
+	return true;
+}
+function jacking(start)
+{
+	clickjack = start;
+	if (!clickjack)
+	{
+		x.visibility = 'hidden';
+	} else {
+		cut.style.top = "0px";
+		cut.style.left = "0px";
+		cut.style.width = "100%";
+		cut.style.height = "100%";
+		outer.style.top = "0px";
+		outer.style.left = "0px";
+		outer.style.width = "100%";
+		outer.style.height = "100%";
+	}
+	curse();
+}
+function panning(start)
+{
+	pan = start;
+	curse();
+}
+
+stoppan = function (e) {
+	if (pan == 1)
+	{
+console.log(4);
+		panning(0);
+	}
+//	return true;
+//	pan=false;
+//	document.body.style.cursor='default';
+	return true;
+}
+
+defaultdisabled = function (e) {
+if (!e)
+	event.returnValue = false;
+else
+	e.preventDefault();
+	return false;
+}
+		
+genIframe = function (noref) {
+	var win = window.open('export2.html?j='+clickjack+'&jt='+x.top+'&jl='+x.left+'&w='+outer.style.width+'&h='+outer.style.height+'&u='+encodeURIComponent(url.value)+'&cw='+cut.style.width+'&ct='+cut.style.top+'&ch='+cut.style.height+'&cl='+cut.style.left+'&b='+gbrk);
+	win.focus();
+	return true;
+
+	var onl;
+	var extra = prompt('Enter URL to redirect, leave blank and press ok for resize, press cancel for no action.','');
+	if(extra!=null) {
+		if(extra!='') extra = 'window.cksl3=\''+extra+'\';';
+		extra+="window.cksl1=function(arg){if(!window.cksl2)window.cksl2=arg;if(window.cksl2<arg){if(window.cksl3){self.location.href=window.cksl3;}else {var c4=document.getElementById('cksl6').style;var c5=document.getElementsByName('cksl7')[0].style;document.body.style.overflow='hidden';document.body.style.width=document.body.style.height=c4.width=c5.width=c4.height=c5.height='100%';c4.position=c5.position='absolute';c4.overflow=c5.overflow='visible';c4.top=c5.top=c4.left=c5.left='0px';}window.cksl2=arg;}setTimeout('window.cksl1(history.length)',1000);};setTimeout('window.cksl1(history.length)',2000);";
+		onl = ' onload="'+extra+'"';
+	} else {
+		onl='';
+	}
+	var normalCode = "<div style=\"overflow: hidden; width: "+outer.style.width+"; height: "+outer.style.height+"; position: relative;\" id=\"cksl6\">\n<iframe name=\"cksl7\" src=\""+(noref ? url.value : "tracker1.php?out=tracker2.php&url="+encodeURIComponent(url.value))+"\" style=\"border: 0pt none ; left: "+cut.style.left+"; top: "+cut.style.top+"; position: absolute; width: "+cut.style.width+"; height: "+cut.style.height+";\" scrolling=\"no\""+onl+"><\/iframe><\/div>";
+	var win = window.open('export.html?code='+escape(normalCode));
+	win.focus();
+	return true;
+}
+</script>
+<style type="text/css">
+* {margin:0px; padding:0px;
+/*font-size:12px;font-family: sans-serif;*/
+}
+body, div { height:100%;}
+#outer {
+position:absolute;
+left:0px;
+top: 0px;
+width:250px;
+height:250px;
+overflow:hidden;
+}
+
+.black_overlay{
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+-moz-opacity: 0.8;
+opacity:.80;
+filter: alpha(opacity=80);
+}
+.ui_overlay{
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: white;
+z-index:1001;
+-moz-opacity: 0.0;
+opacity:.00;
+filter: alpha(opacity=00);
+}
+</style>
+
+</head>
+<body style="width:100%;height:100%;overflow:hidden;" onload="init();" ondragstart="return false" onkeydown="return dopan(event);" onkeyup="return stoppan(event);" onmousedown="curse()" onmouseup="curse()">
+		<img src="x2.png" style="visisbility: hidden; position: absolute" id="x">
+		<iframe id="site" src="instructions.html" style="width:100%;min-height:100%;height:100%;position:absolute;top:0px;left:0px;z-index:0;border:none;background:#fff;" scrolling="no" onmouseup="curse()"  onmousedown="curse();return defaultdisabled(event);"></iframe>
+		<div id="fade" class="black_overlay" style="z-index:1;" onmouseup="curse()" onmousedown="return defaultdisabled(event);"></div>
+		<div id="outer" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:2;border:none;" onmouseup="curse()" onmousedown="return defaultdisabled(event);">
+			<iframe id="cut" src="instructions.html" style="width:100%;min-height:100%;height:100%;position:absolute;top:0px;left:0px;border:none;background:#fff;" scrolling="no" onmouseup="curse()" onmousedown="return defaultdisabled(event);"></iframe>
+		</div>
+		<div id="gui" class="ui_overlay" style="z-index:3;" onmouseup="curse()" onmousedown="return defaultdisabled(event);"></div>
+		<div id="urlbox" style="z-index:4;min-height:20px;height:20px;line-height:20px;border:0px;position:absolute;top:0px;left:0px;"><img onmouseover="this.style.cursor='move'" style="display:block;float:left" src="draggable.gif" onmousedown="Drag.start();return defaultdisabled(event);"/>
+			<input type="text" id="url" style="float:left;min-height:20px;height:20px;width:175px;" value="instructions.html" onkeydown="return changeurl(event);">
+			<input type="button" value="Go" style="min-height:20px;height:20px;width:55px;" onclick="go();">
+			<input type="button" value="Go (no frame breakout)" style="min-height:20px;height:20px;width:144px;" onclick="go(1);">
+			<input type="button" value="Pan" style="min-height:20px;height:20px;width:55px;" onclick="panning(pan?0:2);this.value=pan?'Select':'Pan';">
+			<input type="button" value="Switch to QuickSlice Mode" style="min-height:20px;height:20px;width:165px;" onclick="jacking(clickjack?0:1);this.value=clickjack?'Switch to QuickSlice Mode':'Switch to QuickJack Mode';">
+			<input type="button" value="I'm Done!" style="min-height:20px;height:20px;width:85px;" onclick="genIframe();">
+		</div>
+	<div style="padding:6px;padding-bottom:2px;left:0px;background:#ffffff;height:20px;z-index:10;overflow:auto;width:100%;position:absolute;bottom:0;">
+		<hr style="margin:0px">
+		<a href="http://samy.pl">home page (more sweet code)</a> || <a href="http://twitter.com/samykamkar">follow my twitter</a> || <a href="http://namb.la">blog</a> || <a href="mailto:code@samy.pl">email me</a> || samy kamkar
+	</div>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-6127617-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>

